@@ -7,10 +7,16 @@ function NewPassword {
   echo "/$(dd if=/dev/urandom bs=32 count=1 2>/dev/null | base64)"
 }
 
+function Color {
+  echo -en '\E[40;0;31m'
+  echo "$@"
+  tput sgr0
+}
+
 yes | apt-get update
 yes | apt-get upgrade
 PWD="$(NewPassword)"
-echo "Setting root password to: $PWD"
+Color "Setting root password to: $PWD"
 passwd << EOF
 $PWD
 $PWD
@@ -18,12 +24,12 @@ EOF
 
 yes | apt-get install fail2ban
 
-echo -n "Enter username for non-root user: "
+Color -n "Enter username for non-root user: "
 read USERNAME
 
 useradd -m $USERNAME
 PWD="$(NewPassword)"
-echo "Setting $USERNAME password to: $PWD"
+Color "Setting $USERNAME password to: $PWD"
 passwd $USERNAME << EOF
 $PWD
 $PWD
@@ -35,14 +41,14 @@ root      ALL=(ALL) ALL
 $USERNAME ALL=(ALL) ALL
 EOF
 
-mkdir ~$USERNAME/.ssh
-chown 700 ~$USERNAME/.ssh
-echo "Enter authorized_keys for remote SSH by $USERNAME:"
-cat > ~$USERNAME/.ssh/authorized_keys
-chmod 400 ~$USERNAME/.ssh/authorized_keys
-chown $USERNAME:$USERNAME ~$USERNAME
+mkdir -p /home/$USERNAME/.ssh
+chown 700 /home/$USERNAME/.ssh
+Color "Enter authorized_keys for remote SSH by $USERNAME:"
+cat > /home/$USERNAME/.ssh/authorized_keys
+chmod 400 /home/$USERNAME/.ssh/authorized_keys
+chown $USERNAME:$USERNAME /home/$USERNAME
 
-echo -n "TEST REMOTE SSH, TYPE 'YES' TO CONTINUE: "
+Color -n "TEST REMOTE SSH, TYPE 'YES' TO CONTINUE: "
 read YN
 if [ "$YN" != "YES" ]; then
   echo "Stopping"
@@ -72,5 +78,5 @@ APT::Periodic::AutocleanInterval "7";
 APT::Periodic::Unattended-Upgrade "1";
 EOF
 
-echo "Check /etc/apt/apt.conf.d/50unattended-upgrades to make sure that "
-echo "Allowed-Origins includes distro-security"
+Color "Check /etc/apt/apt.conf.d/50unattended-upgrades to make sure that "
+Color "Allowed-Origins includes distro-security"
