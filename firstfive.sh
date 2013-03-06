@@ -57,10 +57,8 @@ fi
 
 echo "Locking down SSH"
 sed -i 's/^PermitRootLogin .*$//' /etc/ssh/sshd_config
-sed -i 's/^PasswordAuthentication .*//' /etc/ssh/sshd_config
 cat >> /etc/ssh/sshd_config << EOF
 PermitRootLogin no
-PasswordAuthentication no
 EOF
 service ssh restart
 
