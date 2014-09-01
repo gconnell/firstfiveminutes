@@ -46,7 +46,7 @@ chown 700 /home/$USERNAME/.ssh
 Color "Enter authorized_keys for remote SSH by $USERNAME:"
 cat > /home/$USERNAME/.ssh/authorized_keys
 chmod 400 /home/$USERNAME/.ssh/authorized_keys
-chown $USERNAME:$USERNAME /home/$USERNAME
+chown -R $USERNAME:$USERNAME /home/$USERNAME
 
 Color -n "TEST REMOTE SSH, TYPE 'YES' TO CONTINUE: "
 read YN
